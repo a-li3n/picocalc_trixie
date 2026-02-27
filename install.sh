@@ -167,8 +167,11 @@ dtparam=compatible=picomipi\0panel-mipi-dbi-spi
 dtparam=width=320,height=320,width-mm=43,height-mm=43
 dtparam=reset-gpio=25,dc-gpio=24
 dtparam=backlight-gpio=18
-dtparam=clock-frequency=50
 EOF
+# Note: clock-frequency=50 from the README is omitted — the mipi-dbi-spi driver
+# interprets it as 50 Hz pixel clock which fails mode validation and prevents
+# DRM fbdev emulation from creating /dev/fb. SPI speed is already set via
+# speed=70000000 on the dtoverlay line.
 fi
 
 # Keyboard overlay
@@ -189,9 +192,13 @@ fi
 # ── Step 7: Patch /boot/firmware/cmdline.txt ─────────────────────────────────
 
 echo "[7/11] Patching boot cmdline..."
-# Must remain a single line; MINI4x6 gives ~80x53 on the 320x320 display
-if ! grep -q "fbcon=map:1" "${BOOT_CMDLINE}"; then
-    sed -i 's/$/ fbcon=map:1 fbcon=font:MINI4x6/' "${BOOT_CMDLINE}"
+# Must remain a single line.
+# fbcon=map:0: on 64-bit Trixie with no HDMI connected, vc4-kms-v3d does not
+# claim a framebuffer, so the SPI panel ends up as fb0, not fb1.
+if grep -q "fbcon=map:1" "${BOOT_CMDLINE}"; then
+    sed -i 's/fbcon=map:1/fbcon=map:0/' "${BOOT_CMDLINE}"
+elif ! grep -q "fbcon=map:" "${BOOT_CMDLINE}"; then
+    sed -i 's/$/ fbcon=map:0 fbcon=font:MINI4x6/' "${BOOT_CMDLINE}"
 fi
 
 # ── Step 8: Power-off service ─────────────────────────────────────────────────

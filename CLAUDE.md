@@ -115,5 +115,7 @@ FRAMEBUFFER=/dev/fb1 fbterm  # better terminal (Terminus font installed)
 ## Boot Configuration Files
 
 - **`config.txt`**: Reference `/boot/firmware/config.txt` — enables SPI, I2C, MIPI-DBI display overlay, keyboard overlay, audio remap.
+- **Do not set `dtparam=clock-frequency=50`**: The mipi-dbi-spi driver interprets this as 50 Hz pixel clock. Mode validation fails, the DRM modeset never completes, `drm_fbdev_generic_setup()` never creates `/dev/fb`, and fbcon has nothing to bind to. SPI bus speed is already controlled by `speed=70000000` on the `dtoverlay` line.
+- **`fbcon=map:0` not `map:1`**: On 64-bit Trixie with no HDMI connected, `vc4-kms-v3d` does not claim a framebuffer device, so `panel-mipi-dbi` lands on `/dev/fb0` not `/dev/fb1`. Using `map:1` points the console at a non-existent device. Verify with `cat /sys/class/graphics/fb0/name` (should print `panel-mipi-dbid`).
 - **`picomipi.txt`**: Human-readable ILI9341-style init command sequence for the display.
 - **`picomipi.bin`**: Binary firmware consumed by the `panel-mipi-dbi` kernel driver from `/lib/firmware/picomipi.bin`.
