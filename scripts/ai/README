@@ -1,0 +1,28 @@
+AI Terminal — Claude via llm CLI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+First-time setup (run once):
+  ask setup        configure your Anthropic API key
+
+One-shot:
+  ask "question"              ask Claude anything
+  ask < file.txt              pipe file contents to Claude
+  cat error.log | ask "why?"  pipe any output to Claude
+
+Code:
+  explain file.py             explain what a source file does
+  explain file.py "focus on X"  explain with a hint
+  commit-msg                  suggest a commit message from staged diff
+  git commit -m "$(commit-msg)"
+
+Interactive:
+  chat                        persistent conversation (Ctrl-C to quit)
+  chat -m claude-opus-4-6     use a different model
+
+Model default: claude-3-5-haiku-latest
+Override:      export LLM_MODEL=claude-sonnet-4-6
+
+Raw llm access:
+  llm "prompt"                direct invocation
+  llm models                  list all available models
+  llm logs                    show recent queries

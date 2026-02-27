@@ -1,0 +1,50 @@
+#!/bin/bash
+# Read or set the PicoCalc display backlight (0-255).
+# Usage:
+#   bright           print current level
+#   bright 150       set to 150
+#   bright +20       increase by 20
+#   bright -20       decrease by 20
+
+set -euo pipefail
+
+BUS=1
+ADDR=0x1f
+REG_READ=0x05
+REG_WRITE=0x85   # 0x05 | 0x80 (PICOCALC_WRITE_MASK)
+
+clamp() {
+    local v=$1
+    if   [ "$v" -lt 0 ];   then echo 0
+    elif [ "$v" -gt 255 ]; then echo 255
+    else echo "$v"
+    fi
+}
+
+if [ $# -eq 0 ]; then
+    # Read current value
+    i2cget -y "$BUS" "$ADDR" "$REG_READ"
+    exit 0
+fi
+
+ARG="$1"
+
+# Relative adjustment: +N or -N
+if [[ "$ARG" =~ ^[+-][0-9]+$ ]]; then
+    CURRENT=$(i2cget -y "$BUS" "$ADDR" "$REG_READ")
+    # i2cget returns hex like 0x96; convert to decimal
+    CURRENT=$(printf '%d' "$CURRENT")
+    NEW=$(clamp $((CURRENT + ARG)))
+    i2cset -y "$BUS" "$ADDR" "$REG_WRITE" "$NEW"
+    exit 0
+fi
+
+# Absolute value
+if [[ "$ARG" =~ ^[0-9]+$ ]]; then
+    NEW=$(clamp "$ARG")
+    i2cset -y "$BUS" "$ADDR" "$REG_WRITE" "$NEW"
+    exit 0
+fi
+
+echo "Usage: bright [N | +N | -N]" >&2
+exit 1

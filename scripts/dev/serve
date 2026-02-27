@@ -1,0 +1,15 @@
+#!/bin/bash
+# Serve the current directory over HTTP for easy file transfer.
+# Usage:
+#   serve          listen on port 8080
+#   serve 9090     listen on a custom port
+
+PORT="${1:-8080}"
+IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
+
+echo "Serving $(pwd)"
+echo "Browse from another device: http://${IP:-<device-ip>}:${PORT}"
+echo "Stop with Ctrl-C"
+echo ""
+
+exec python3 -m http.server "$PORT"

@@ -1,0 +1,17 @@
+#!/bin/bash
+# Run a pygame script on the PicoCalc SPI display.
+# Usage: pyg script.py [args...]
+
+set -euo pipefail
+
+if [ $# -eq 0 ] || [ ! -f "$1" ]; then
+    echo "Usage: pyg script.py [args...]" >&2
+    [ $# -gt 0 ] && echo "File not found: $1" >&2
+    exit 1
+fi
+
+export SDL_VIDEODRIVER=fbdev
+export SDL_FBDEV=/dev/fb1
+export SDL_AUDIODRIVER=alsa
+unset DISPLAY   # prevent pygame from attempting X11 fallback
+exec python3 "$@"

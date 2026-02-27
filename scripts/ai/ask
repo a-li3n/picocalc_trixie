@@ -1,0 +1,39 @@
+#!/bin/bash
+# One-shot query to Claude.
+# Usage:
+#   ask "question"
+#   cat file.py | ask "what does this do?"
+#   ask setup    — configure API key
+
+set -euo pipefail
+
+MODEL="${LLM_MODEL:-claude-3-5-haiku-latest}"
+
+if [ "${1:-}" = "setup" ]; then
+    echo "Enter your Anthropic API key from https://console.anthropic.com"
+    llm keys set claude
+    echo "Done. Test with: ask 'hello'"
+    exit 0
+fi
+
+# Build prompt: combine args + stdin if piped
+PROMPT="${*:-}"
+STDIN_DATA=""
+
+if [ ! -t 0 ]; then
+    STDIN_DATA="$(cat)"
+fi
+
+if [ -z "$PROMPT" ] && [ -z "$STDIN_DATA" ]; then
+    echo "Usage: ask \"question\""
+    echo "       cat file | ask \"question about the file\""
+    exit 1
+fi
+
+if [ -n "$STDIN_DATA" ] && [ -n "$PROMPT" ]; then
+    printf '%s\n\n%s' "$STDIN_DATA" "$PROMPT" | llm -m "$MODEL"
+elif [ -n "$STDIN_DATA" ]; then
+    echo "$STDIN_DATA" | llm -m "$MODEL"
+else
+    llm -m "$MODEL" "$PROMPT"
+fi

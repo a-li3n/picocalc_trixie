@@ -1,0 +1,25 @@
+#!/bin/bash
+# Append-only scratch pad. Opens neovim when called with no args.
+# Usage:
+#   note "some idea"     append timestamped entry to ~/notes.md
+#   note -l              show last 10 entries
+#   note                 open ~/notes.md in neovim at end of file
+
+NOTE_FILE="${NOTE_FILE:-${HOME}/notes.md}"
+
+case "${1:-}" in
+    -l)
+        if [ ! -f "$NOTE_FILE" ]; then
+            echo "(no notes yet)" >&2
+            exit 0
+        fi
+        tail -20 "$NOTE_FILE"
+        ;;
+    "")
+        exec nvim +$ "$NOTE_FILE"
+        ;;
+    *)
+        TIMESTAMP="$(date '+%Y-%m-%d %H:%M')"
+        printf '[%s] %s\n' "$TIMESTAMP" "$*" >> "$NOTE_FILE"
+        ;;
+esac

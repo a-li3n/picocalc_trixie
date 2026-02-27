@@ -1,0 +1,12 @@
+#!/bin/bash
+# Run any SDL2 binary on the PicoCalc SPI display.
+# Usage: picocalc-run ./binary [args...]
+
+if [ $# -eq 0 ]; then
+    echo "Usage: picocalc-run ./binary [args...]" >&2
+    exit 1
+fi
+
+export SDL_VIDEODRIVER=fbdev
+export SDL_FBDEV=/dev/fb1
+exec "$@"

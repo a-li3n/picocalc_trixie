@@ -1,0 +1,4 @@
+#!/bin/bash
+# Wrapper for the llm CLI installed in the AI venv.
+# Keeps llm on PATH without requiring the user to activate the venv.
+exec "${HOME}/.ai-env/bin/llm" "$@"

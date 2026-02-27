@@ -1,0 +1,30 @@
+Dev & System Helpers
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Notes:
+  note "idea"        append timestamped note to ~/notes.md
+  note -l            show last 10 notes
+  note               open ~/notes.md in neovim
+
+Search:
+  s pattern          search file contents (ripgrep, no color, line numbers)
+  s pattern "*.py"   search only Python files
+
+File transfer:
+  serve              serve current directory over HTTP on port 8080
+  serve 9090         use a different port
+  (browse from laptop at http://<device-ip>:8080)
+
+Backlight:
+  bright             print current level (0-255)
+  bright 150         set to a specific level
+  bright +20         increase by 20
+  bright -20         decrease by 20
+
+Battery:
+  battery            show charge level (human-readable)
+  battery --tmux     compact format for tmux status bar
+
+Hardware paths:
+  /sys/firmware/picocalc/battery_percent
+  i2c bus 1, addr 0x1f, reg 0x05 (backlight, write mask: reg | 0x80)

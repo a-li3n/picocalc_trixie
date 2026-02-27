@@ -1,0 +1,29 @@
+#!/bin/bash
+# Show PicoCalc battery level.
+# Usage:
+#   battery          human-readable output
+#   battery --tmux   compact format for tmux status bar
+
+SYSFS="/sys/firmware/picocalc/battery_percent"
+
+if [ ! -r "$SYSFS" ]; then
+    echo "Battery sysfs not found: is picocalc_kbd module loaded?" >&2
+    exit 1
+fi
+
+PERCENT=$(cat "$SYSFS")
+
+if [ "${1:-}" = "--tmux" ]; then
+    # Compact format used by tmux status line
+    if [ "$PERCENT" -gt 100 ]; then
+        printf 'C%d%%  ' $((PERCENT - 128))
+    else
+        printf ' %d%%  ' "$PERCENT"
+    fi
+else
+    if [ "$PERCENT" -gt 100 ]; then
+        echo "Charging: $((PERCENT - 128))%"
+    else
+        echo "Battery: ${PERCENT}%"
+    fi
+fi

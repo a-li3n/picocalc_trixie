@@ -1,0 +1,27 @@
+#!/bin/bash
+# Explain a source file or piped content.
+# Prompt is tuned for short output on a small screen.
+# Usage:
+#   explain file.py
+#   explain file.py "focus on the interrupt handler"
+#   cat file.c | explain
+
+set -euo pipefail
+
+MODEL="${LLM_MODEL:-claude-3-5-haiku-latest}"
+PROMPT_BASE="Explain this concisely for a developer. Be brief — the reader has a small terminal (80 columns, ~50 lines). Use plain text, no markdown headers."
+
+if [ $# -ge 1 ] && [ -f "$1" ]; then
+    FILE="$1"; shift
+    HINT="${*:-}"
+    FULL_PROMPT="${PROMPT_BASE}${HINT:+ Focus on: $HINT}"
+    llm -m "$MODEL" "$FULL_PROMPT" < "$FILE"
+elif [ ! -t 0 ]; then
+    HINT="${*:-}"
+    FULL_PROMPT="${PROMPT_BASE}${HINT:+ Focus on: $HINT}"
+    cat | llm -m "$MODEL" "$FULL_PROMPT"
+else
+    echo "Usage: explain file.py [hint]"
+    echo "       cat file.c | explain"
+    exit 1
+fi

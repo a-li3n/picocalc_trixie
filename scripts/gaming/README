@@ -1,0 +1,49 @@
+Retro Gaming
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All launchers set SDL_VIDEODRIVER=fbdev and SDL_FBDEV=/dev/fb1 so output
+goes to the 320x320 SPI display.
+
+  pico8                    launch PICO-8 (see install instructions below)
+  pyg script.py            run a pygame script on the PicoCalc display
+  picocalc-run ./binary    run any SDL2 binary on the PicoCalc display
+
+Put your games in ~/games/.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PICO-8 Install
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Buy a license ($15): https://lexaloffle.com/pico-8.php
+
+2. Download the Raspberry Pi build:
+   https://lexaloffle.com/games.php?page=updates
+   On 64-bit Trixie: choose the 64-bit Raspberry Pi build (pico8_64).
+   On 32-bit Trixie: choose the standard Raspberry Pi build (pico8).
+
+3. Copy the zip to the PicoCalc (from your laptop):
+   scp pico-8_*.zip pi@<device-ip>:~
+
+4. Extract into ~/pico8/:
+   mkdir -p ~/pico8
+   unzip ~/pico-8_*.zip -d ~/pico8 --strip-components=1
+
+5. Run:
+   pico8
+
+   The launcher auto-detects pico8_64 vs pico8 and sets the display env vars.
+   Override install dir: export PICO8_DIR=~/somewhere-else
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Writing pygame games
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Target resolution: 320x320 (the physical display).
+PICO-8 carts run at 128x128 scaled up — they look great.
+
+Minimal pygame template:
+  import pygame
+  pygame.init()
+  screen = pygame.display.set_mode((320, 320))
+
+Run with: pyg mygame.py

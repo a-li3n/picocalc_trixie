@@ -1,0 +1,21 @@
+#!/bin/bash
+# Launch PICO-8 on the PicoCalc SPI display.
+# Expects PICO-8 to be extracted in ~/pico8/.
+# Override: export PICO8_DIR=~/somewhere-else
+# See ~/gaming/README for install instructions.
+
+PICO8_DIR="${PICO8_DIR:-${HOME}/pico8}"
+
+if [ -f "${PICO8_DIR}/pico8_64" ]; then
+    BIN="${PICO8_DIR}/pico8_64"
+elif [ -f "${PICO8_DIR}/pico8" ]; then
+    BIN="${PICO8_DIR}/pico8"
+else
+    echo "PICO-8 not found in ${PICO8_DIR}/" >&2
+    echo "See ~/gaming/README for install instructions." >&2
+    exit 1
+fi
+
+export SDL_VIDEODRIVER=fbdev
+export SDL_FBDEV=/dev/fb1
+exec "$BIN" "$@"

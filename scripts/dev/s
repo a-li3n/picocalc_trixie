@@ -1,0 +1,27 @@
+#!/bin/bash
+# Search file contents with ripgrep.
+# Color disabled (framebuffer terminals handle ANSI inconsistently).
+# Usage:
+#   s pattern
+#   s pattern "*.py"    search only matching files
+#   s -l pattern        print filenames only
+
+set -euo pipefail
+
+if [ $# -eq 0 ]; then
+    echo "Usage: s pattern [glob]" >&2
+    echo "       s -l pattern" >&2
+    exit 1
+fi
+
+if [ "${1:-}" = "-l" ]; then
+    shift
+    rg --color=never -l "$@"
+else
+    PATTERN="$1"; shift
+    if [ $# -gt 0 ]; then
+        rg --color=never -n "$PATTERN" --glob "$1"
+    else
+        rg --color=never -n "$PATTERN"
+    fi
+fi

@@ -1,0 +1,48 @@
+PicoCalc — Quick Reference
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Three sets of tools are installed. Each has a README in its folder.
+
+  ~/ai/       Claude AI tools (ask, chat, explain, commit-msg)
+  ~/dev/      Dev & system helpers (note, search, backlight, serve, battery)
+  ~/gaming/   Game launchers (pico8, pygame scripts, SDL2 wrapper)
+
+All scripts are also on PATH via ~/bin/. Type the command name from anywhere.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Quick commands
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+First-time AI setup:
+  llm keys set claude          enter your Anthropic API key
+
+AI:
+  ask "question"               one-shot answer from Claude
+  cat file.py | ask "why?"     pipe any text to Claude
+  chat                         interactive conversation
+  explain file.py              explain source code (screen-friendly)
+  commit-msg                   generate commit message from staged diff
+
+Dev:
+  note "idea"                  append timestamped note to ~/notes.md
+  note -l                      show last 10 notes
+  note                         open ~/notes.md in neovim
+  s pattern                    search files with ripgrep
+  serve                        share current dir over HTTP (check IP with: hostname -I)
+  battery                      show battery level
+  bright 150                   set backlight (0-255)
+  bright +20 / bright -20      adjust backlight
+
+Gaming:
+  pico8                        launch PICO-8 (see ~/gaming/README to install)
+  pyg mygame.py                run a pygame script on the PicoCalc display
+  picocalc-run ./binary        run any SDL2 binary on the PicoCalc display
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Useful system commands
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  tmux                         multiplexer (see man tmux; prefix is Ctrl-b)
+  FRAMEBUFFER=/dev/fb1 fbterm  better terminal with Terminus font
+  sudo poweroff                shut down safely (cuts power via STM32)
+  dmesg | grep picocalc        check keyboard driver messages
