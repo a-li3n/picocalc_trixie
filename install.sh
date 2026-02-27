@@ -62,10 +62,36 @@ EOF
 
 echo "[2/11] Installing packages (this may take a while)..."
 apt-get update -q
+
+# Detect kernel headers package — name differs between 32-bit and 64-bit
+# Raspberry Pi OS and plain Debian Trixie.
+detect_headers_pkg() {
+    local candidates=(
+        raspberrypi-kernel-headers   # 32-bit Raspberry Pi OS
+        linux-headers-rpi-v8         # 64-bit Raspberry Pi OS (Pi 2/3/4/Zero2W)
+        linux-headers-rpi-2712       # 64-bit Raspberry Pi OS (Pi 5)
+        "linux-headers-$(uname -r)"  # plain Debian / fallback
+    )
+    for pkg in "${candidates[@]}"; do
+        if apt-cache show "$pkg" &>/dev/null 2>&1; then
+            echo "$pkg"
+            return
+        fi
+    done
+    echo ""
+}
+HEADERS_PKG="$(detect_headers_pkg)"
+if [ -z "$HEADERS_PKG" ]; then
+    echo "ERROR: Could not find a kernel headers package." >&2
+    echo "       Run: apt-cache search linux-headers" >&2
+    exit 1
+fi
+echo "      Using kernel headers package: ${HEADERS_PKG}"
+
 apt-get install -y \
     `# Kernel module build` \
     build-essential \
-    raspberrypi-kernel-headers \
+    "${HEADERS_PKG}" \
     device-tree-compiler \
     dkms \
     `# Hardware access` \

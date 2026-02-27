@@ -19,6 +19,8 @@ There is no build system at the repository root. All commands must be run **on t
 
 Must be run on the Pi with kernel headers installed. The module is managed by DKMS (`picocalc_kbd/dkms.conf`, version 1.0), so it rebuilds automatically after kernel updates.
 
+The kernel headers package name varies by OS variant — `install.sh` auto-detects it. Candidates in priority order: `raspberrypi-kernel-headers` (32-bit RPi OS), `linux-headers-rpi-v8` (64-bit RPi OS on Pi Zero 2 W / Pi 4), `linux-headers-rpi-2712` (Pi 5), `linux-headers-$(uname -r)` (plain Debian fallback).
+
 To build manually (outside of install.sh / DKMS):
 
 ```bash
